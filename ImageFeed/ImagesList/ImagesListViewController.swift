@@ -1,12 +1,19 @@
 import UIKit
 
-class ImagesListViewController: UIViewController {
+final class ImagesListViewController: UIViewController {
     
     //MARK: @IBOutlet
     @IBOutlet private var tableView: UITableView!
-    
+
     //MARK: Private property
     private let photosName: [String] = Array(0..<20).map{ "\($0)" }
+    private let currentDate = Date()
+    private let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .long
+        dateFormatter.timeStyle = .none
+        return dateFormatter
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -16,7 +23,6 @@ class ImagesListViewController: UIViewController {
     
     //MARK: Private method
     private func setupTableView() {
-        tableView.rowHeight = 200
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
     }
 }
@@ -28,9 +34,10 @@ extension ImagesListViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath)
-        
-        guard let imageListCell = cell as? ImagesListCell else {
+        guard let imageListCell = tableView.dequeueReusableCell(
+            withIdentifier: ImagesListCell.reuseIdentifier,
+            for: indexPath
+        ) as? ImagesListCell else {
             return UITableViewCell()
         }
         
@@ -59,18 +66,38 @@ extension ImagesListViewController: UITableViewDelegate {
 
 // MARK: - ImagesListViewController
 extension ImagesListViewController {
+    
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath)  {
         guard let image = UIImage(named: photosName[indexPath.row]) else {
             return
         }
+    
+        doGradient(for: cell.gradientView)
         
         cell.imageCell.image = image
-        cell.dateLabel.text = Date().dateTimeString
-        
-        let indexPathRow = indexPath.row + 1
-        let isLiked = indexPathRow % 2 == 0
+        cell.dateLabel.text = dateFormatter.string(from: currentDate)
+        let isLiked = indexPath.row % 2 == 0
         let likeImage = isLiked ? UIImage(named: "LikeActive") : UIImage(named: "LikeNoActive")
         cell.likeButton.setImage(likeImage, for: .normal)
     }
+    
+    private func doGradient(for view: UIView) {
+        
+        let gradientMaskLayer = CAGradientLayer()
+        gradientMaskLayer.frame = view.bounds
+        
+        gradientMaskLayer.startPoint = CGPoint(x: 0.5, y: 1)
+        gradientMaskLayer.endPoint = CGPoint(x: 0.5, y: 0)
+        
+        let ypColor20 = UIColor(named: "YP Black")?.withAlphaComponent(0.2).cgColor
+        let ypColor15 = UIColor(named: "YP Black")?.withAlphaComponent(0.15).cgColor
+        gradientMaskLayer.colors = [ypColor20 ?? UIColor.black.withAlphaComponent(0.3).cgColor,
+                                    ypColor15 ?? UIColor.black.withAlphaComponent(0.15).cgColor,
+                                    UIColor.clear.cgColor]
+        gradientMaskLayer.locations = [0, 0.7, 1]
+        view.layer.masksToBounds = true
+        view.layer.cornerRadius = 16
+        view.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        view.layer.mask = gradientMaskLayer
+    }
 }
-

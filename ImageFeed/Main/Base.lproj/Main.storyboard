@@ -39,8 +39,15 @@
                                                         </userDefinedRuntimeAttribute>
                                                     </userDefinedRuntimeAttributes>
                                                 </imageView>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hru-u8-9pp">
+                                                    <rect key="frame" x="16" y="166" width="361" height="30"/>
+                                                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="30" id="bZl-5P-du7"/>
+                                                    </constraints>
+                                                </view>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="27 августа 2022" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CI7-3C-2kz">
-                                                    <rect key="frame" x="28.000000000000007" y="165.33333333333334" width="101.66666666666669" height="15.666666666666657"/>
+                                                    <rect key="frame" x="24.000000000000007" y="172.33333333333334" width="101.66666666666669" height="15.666666666666657"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                     <color key="textColor" name="YPWhite "/>
                                                     <nil key="highlightedColor"/>
@@ -60,18 +67,22 @@
                                             <constraints>
                                                 <constraint firstItem="8af-F3-t6a" firstAttribute="leading" secondItem="Wbe-ov-d2b" secondAttribute="leading" constant="16" id="035-Wu-myG"/>
                                                 <constraint firstAttribute="bottom" secondItem="8af-F3-t6a" secondAttribute="bottom" constant="4" id="CiK-OF-ajH"/>
+                                                <constraint firstItem="hru-u8-9pp" firstAttribute="leading" secondItem="8af-F3-t6a" secondAttribute="leading" id="DVD-1Z-jU6"/>
                                                 <constraint firstAttribute="trailing" secondItem="8af-F3-t6a" secondAttribute="trailing" constant="16" id="KnK-MA-iuq"/>
                                                 <constraint firstItem="8af-F3-t6a" firstAttribute="trailing" secondItem="AtL-ga-bJT" secondAttribute="trailing" id="MTA-od-hMi"/>
-                                                <constraint firstAttribute="bottomMargin" secondItem="CI7-3C-2kz" secondAttribute="bottom" constant="8" id="NCk-Ct-hgb"/>
+                                                <constraint firstItem="8af-F3-t6a" firstAttribute="bottom" secondItem="CI7-3C-2kz" secondAttribute="bottom" constant="8" id="NCk-Ct-hgb"/>
                                                 <constraint firstItem="8af-F3-t6a" firstAttribute="top" secondItem="Wbe-ov-d2b" secondAttribute="top" constant="4" id="Tau-mm-RYB"/>
-                                                <constraint firstItem="8af-F3-t6a" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="CI7-3C-2kz" secondAttribute="trailing" constant="20" id="ZWU-KE-eBS"/>
-                                                <constraint firstItem="CI7-3C-2kz" firstAttribute="leading" secondItem="Wbe-ov-d2b" secondAttribute="leadingMargin" constant="8" id="jwx-rw-wTE"/>
+                                                <constraint firstItem="hru-u8-9pp" firstAttribute="bottom" secondItem="8af-F3-t6a" secondAttribute="bottom" id="gJd-cK-QxQ"/>
+                                                <constraint firstItem="CI7-3C-2kz" firstAttribute="leading" secondItem="8af-F3-t6a" secondAttribute="leading" constant="8" id="jwx-rw-wTE"/>
+                                                <constraint firstItem="8af-F3-t6a" firstAttribute="trailing" secondItem="hru-u8-9pp" secondAttribute="trailing" id="pdX-Dk-m16"/>
                                                 <constraint firstItem="AtL-ga-bJT" firstAttribute="top" secondItem="Wbe-ov-d2b" secondAttribute="top" id="qUo-po-acF"/>
+                                                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="CI7-3C-2kz" secondAttribute="trailing" constant="20" symbolic="YES" id="vOE-Tr-vtE"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" name="YPBlack "/>
                                         <connections>
                                             <outlet property="dateLabel" destination="CI7-3C-2kz" id="4Gz-Yo-krj"/>
+                                            <outlet property="gradientView" destination="hru-u8-9pp" id="Tq9-MF-bKc"/>
                                             <outlet property="imageCell" destination="8af-F3-t6a" id="U6M-BT-73V"/>
                                             <outlet property="likeButton" destination="AtL-ga-bJT" id="E8Q-hV-jrg"/>
                                         </connections>
@@ -98,7 +109,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="58" y="-2"/>
+            <point key="canvasLocation" x="57.251908396946561" y="-2.1126760563380285"/>
         </scene>
     </scenes>
     <resources>
