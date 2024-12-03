@@ -38,12 +38,18 @@ final class SingleImageViewController: UIViewController {
     func setupImageView() {
         guard let image = imageView.image else { return }
         
+        var widthScale: CGFloat = .zero
+        var heightScale: CGFloat = .zero
+        
         let scrollViewSize = scrollView.bounds.size
         let imageSize = image.size
-        let widthScale = scrollViewSize.width / imageSize.width
-        let heightScale = scrollViewSize.height / imageSize.height
-        let scale = min(widthScale, heightScale) 
         
+        if scrollViewSize.width != 0 && scrollViewSize.height != 0 {
+            widthScale = scrollViewSize.width / imageSize.width
+            heightScale = scrollViewSize.height / imageSize.height
+        }
+        
+        let scale = min(widthScale, heightScale)
         let scaledWidth = imageSize.width * scale
         let scaledHeight = imageSize.height * scale
         
