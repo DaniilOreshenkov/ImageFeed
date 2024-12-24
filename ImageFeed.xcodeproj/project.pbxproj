@@ -45,8 +45,8 @@
 		1979660A2CF1078700DC31CC = {
 			isa = PBXGroup;
 			children = (
-				197966152CF1078700DC31CC /* ImageFeed */,
 				197966142CF1078700DC31CC /* Products */,
+				197966152CF1078700DC31CC /* ImageFeed */,
 			);
 			sourceTree = "<group>";
 		};
