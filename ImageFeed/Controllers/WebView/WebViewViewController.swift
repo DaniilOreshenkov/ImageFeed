@@ -6,7 +6,7 @@ enum WebViewConstants {
 }
 final class WebViewController: UIViewController {
     // MARK: Properties
-    weak var delegate: WebViewControllerDelegate!
+    weak var delegate: WebViewControllerDelegate?
     
     // MARK: Outlets
     
@@ -83,7 +83,7 @@ final class WebViewController: UIViewController {
     // MARK: Actions
     
     @IBAction private func buttonBackTapped() {
-        delegate.webViewViewControllerDidCancel(self)
+        delegate?.webViewViewControllerDidCancel(self)
     }
 }
 
@@ -96,7 +96,7 @@ extension WebViewController: WKNavigationDelegate {
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
         if let code = code(from: navigationAction) {
-            delegate.webViewViewController(self, didAuthenticateWithCode: code)
+            delegate?.webViewViewController(self, didAuthenticateWithCode: code)
             decisionHandler(.cancel)
         } else {
             decisionHandler(.allow)
