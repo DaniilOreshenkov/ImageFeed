@@ -1,11 +1,13 @@
 import UIKit
 
 final class OAuth2TokenStorage {
-    var token: String {
+    var token: String? {
         get {
             guard let token = UserDefaults.standard.string(forKey: Constants.UserDefaults.bearerTokenKey) else {
-                fatalError("Bearer token isn't string")
+                print("Bearer token isn't string")
+                return nil
             }
+            
             return token
         }
         set {

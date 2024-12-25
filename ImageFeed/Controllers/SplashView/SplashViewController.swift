@@ -4,6 +4,7 @@ final class SplashViewController: UIViewController {
     
     private let showGallerySegueId = "showGallery"
     private let showAuthSegueId = "showAuthorization"
+    private let oauth2TokenStorage = OAuth2TokenStorage()
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -13,13 +14,14 @@ final class SplashViewController: UIViewController {
     }
     
     private func showNextScreen() {
-        if let _ = UserDefaults.standard.string(forKey: Constants.UserDefaults.bearerTokenKey) {
+        guard let token = oauth2TokenStorage.token else { return }
+        
+        if token.isEmpty {
             print("gallery showed")
             performSegue(withIdentifier: showGallerySegueId, sender: self)
         } else {
             performSegue(withIdentifier: showAuthSegueId, sender: self)
         }
-
     }
     
     private func switchToTabBarController() {
