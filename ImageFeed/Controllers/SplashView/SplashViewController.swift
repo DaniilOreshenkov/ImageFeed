@@ -13,10 +13,19 @@ final class SplashViewController: UIViewController {
         showNextScreen()
     }
     
+//    private func showNextScreen() {
+//        guard let token = oauth2TokenStorage.token else { return }
+//        let token2: String? = nil
+//        if ((token2?.isEmpty) != nil) {
+//            print("gallery showed")
+//            performSegue(withIdentifier: showGallerySegueId, sender: self)
+//        } else {
+//            performSegue(withIdentifier: showAuthSegueId, sender: self)
+//        }
+//    }
+    
     private func showNextScreen() {
-        guard let token = oauth2TokenStorage.token else { return }
-        
-        if token.isEmpty {
+        if let token = oauth2TokenStorage.token, !token.isEmpty {
             print("gallery showed")
             performSegue(withIdentifier: showGallerySegueId, sender: self)
         } else {

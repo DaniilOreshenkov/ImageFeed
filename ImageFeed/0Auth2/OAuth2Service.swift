@@ -53,6 +53,7 @@ final class OAuth2Service {
                     handler(.failure(error))
                 }
             case .failure(let error):
+                print("Error: \(error)")
                 handler(.failure(error))
             }
         }

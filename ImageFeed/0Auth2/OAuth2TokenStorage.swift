@@ -5,7 +5,7 @@ final class OAuth2TokenStorage {
         get {
             guard let token = UserDefaults.standard.string(forKey: Constants.UserDefaults.bearerTokenKey) else {
                 print("Bearer token isn't string")
-                return nil
+                return UserDefaults.standard.string(forKey: Constants.UserDefaults.bearerTokenKey)
             }
             
             return token
