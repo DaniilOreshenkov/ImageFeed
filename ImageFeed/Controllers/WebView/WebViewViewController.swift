@@ -7,7 +7,7 @@ enum WebViewConstants {
 final class WebViewController: UIViewController {
     // MARK: Properties
     weak var delegate: WebViewControllerDelegate?
-    
+    private var estimatedProgressObservation: NSKeyValueObservation?
     // MARK: Outlets
     
     @IBOutlet private weak var progressView: UIProgressView!
@@ -18,42 +18,50 @@ final class WebViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        estimatedProgressObservation = webView.observe(
+            \.estimatedProgress,
+             options: [],
+             changeHandler: { [weak self] _, _ in
+                 guard let self = self else { return }
+                 self.updateProgress()
+             })
+        
         webView.navigationDelegate = self
         loadAuthView()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        webView.addObserver(
-            self,
-            forKeyPath: #keyPath(WKWebView.estimatedProgress),
-            options: .new,
-            context: nil
-        )
-    }
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        
+//        webView.addObserver(
+//            self,
+//            forKeyPath: #keyPath(WKWebView.estimatedProgress),
+//            options: .new,
+//            context: nil
+//        )
+//    }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
-    }
+//    override func viewDidDisappear(_ animated: Bool) {
+//        webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
+//    }
     
     // MARK: Overrides
     
-    override func observeValue(
-        forKeyPath keyPath: String?,
-        of object: Any?,
-        change: [NSKeyValueChangeKey : Any]?,
-        context: UnsafeMutableRawPointer?
-    ) {
-        if keyPath == #keyPath(WKWebView.estimatedProgress) {
-            updateProgress()
-        } else {
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-        }
-    }
+//    override func observeValue(
+//        forKeyPath keyPath: String?,
+//        of object: Any?,
+//        change: [NSKeyValueChangeKey : Any]?,
+//        context: UnsafeMutableRawPointer?
+//    ) {
+//        if keyPath == #keyPath(WKWebView.estimatedProgress) {
+//            updateProgress()
+//        } else {
+//            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+//        }
+//    }
     
     // MARK: Methods
-
+    
     private func updateProgress() {
         progressView.progress = Float(webView.estimatedProgress)
         progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
