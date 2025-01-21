@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
     // MARK: Properties
@@ -41,14 +42,54 @@ final class ProfileViewController: UIViewController {
         return button
     }()
     
+    private let profileService = ProfileService.shared
+    private var profileImageServiceObserver: NSObjectProtocol?
+    
     // MARK: Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        configure(model: profileService.profile)
+        
         setupViews()
         setupLayouts()
         setupAppearance()
+        
+        profileImageServiceObserver = NotificationCenter.default
+            .addObserver(
+                forName: ProfileImageService.didChangeNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                guard let self = self else { return }
+                self.updateAvatar()
+            }
+        updateAvatar()
+    }
+    
+    func configure(model: Profile?) {
+        guard let model = model else { return }
+        userNameLabel.text = model.name
+        loginLabel.text = model.loginName
+        descriptionLabel.text = model.bio
+    }
+    
+    private func updateAvatar() {
+        
+        let processor = RoundCornerImageProcessor(cornerRadius: 50)
+        guard
+            let profileImageURL = ProfileImageService.shared.avatarURL,
+            let url = URL(string: profileImageURL)
+        else { return }
+        
+        avatarImageView.kf.setImage(
+            with: url,
+            placeholder: UIImage(resource: .stub),
+            options: [
+                .processor(processor)
+            ]
+        )
     }
     
     private func setupViews() {
@@ -91,7 +132,6 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setupAppearance() {
-        avatarImageView.layer.cornerRadius = avatarImageView.bounds.width / 2
         view.backgroundColor = UIColor(resource: .ypBlack)
     }
 }
