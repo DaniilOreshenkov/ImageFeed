@@ -11,31 +11,6 @@ final class ProfileService {
     private var lastToken: String?
     private var task: URLSessionTask?
     
-    private func makeRequest() -> URLRequest? {
-        let baseURL = URL(string: Constants.defaultBaseURL)
-        
-        guard
-            let url = URL(string: "/me", relativeTo: baseURL)
-        else {
-            assertionFailure("Cannot construct url")
-            return nil
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        
-        request.setValue("Bearer \(tokenStorage.token ?? "")", forHTTPHeaderField: "Authorization")
-        return request
-    }
-    
-    func createGetRequestWithToken(url: URL, token: String) -> URLRequest? {
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        return request
-    }
-    
-    
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
         assert(Thread.isMainThread)
         
@@ -74,6 +49,22 @@ final class ProfileService {
         }
         self.task = task
         task.resume()
+    }
+    
+    private func makeRequest() -> URLRequest? {
+        let baseURL = URL(string: Constants.defaultBaseURL)
         
+        guard
+            let url = URL(string: "/me", relativeTo: baseURL)
+        else {
+            assertionFailure("Cannot construct url")
+            return nil
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        request.setValue("Bearer \(tokenStorage.token ?? "")", forHTTPHeaderField: "Authorization")
+        return request
     }
 }
