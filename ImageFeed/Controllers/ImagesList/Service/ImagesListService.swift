@@ -11,7 +11,7 @@ final class ImagesListService {
     private var lastLoadedPage: Int?
     private var task: URLSessionTask?
     
-    private init() {}
+    init() {}
     
     
     func fetchPhotosNextPage() {
@@ -26,15 +26,17 @@ final class ImagesListService {
             return
         }
         
-        let task = networkService.objectTask(for: request) { [weak self] (result: (Result<PhotoResult, Error>)) in
+        let task = networkService.objectTask(for: request) { [weak self] (result: (Result<[PhotoResult], Error>)) in
             guard let self = self else { return }
             
             switch result {
             case .success(let photoResult):
                 lastLoadedPage = page
-                print(photoResult)
-                var photos = [Photo]()
-                self.photos += photos
+                print("ImagesListService - Result: Fetched \(photoResult) photos for page \(page)")
+                photoResult.forEach {
+                    guard let photo = self.convertToPhoto(from: $0) else { return }
+                    self.photos.append(photo)
+                }
                 NotificationCenter.default.post(name: ImagesListService.didChangeNotification, object: self)
             case .failure(let error):
                 print("ImagesListService error: fetchPhotosNextPage - SomeError - \(error)")
@@ -45,32 +47,11 @@ final class ImagesListService {
         task.resume()
     }
     
-//    private func convertToPhoto(from photoResult: PhotoResult) -> Photo? {
-//
-//        let size = CGSize(width: photoResult.width, height: photoResult.height)
-//        
-//        let dateString = convertToPrettyDate(from: photoResult.createdAt)
-//        
-//        guard let thumbImageURL = URL(string: photoResult.urls.thumb) else { return nil}
-//        guard let largeImageURL = URL(string: photoResult.urls.full) else { return nil}
-//        
-//        let photo = Photo(
-//            id: photoResult.id,
-//            size: size,
-//            createdAt: dateString,
-//            welcomeDescription: photoResult.description ?? photoResult.altDescription,
-//            thumbImageURL: thumbImageURL,
-//            largeImageURL: largeImageURL,
-//            isLiked: photoResult.likedByUser)
-//        
-//        return photo
-//    }
-    
     private func makeRequestPhoto(page: Int) -> URLRequest? {
         let baseURL = URL(string: Constants.defaultBaseURL)
         
         guard
-            let url = URL(string: "/me", relativeTo: baseURL)
+            let url = URL(string: "/photos", relativeTo: baseURL)
         else {
             assertionFailure("Cannot construct url")
             return nil
@@ -81,5 +62,25 @@ final class ImagesListService {
         
         request.setValue("Bearer \(tokenStorage.token ?? "")", forHTTPHeaderField: "Authorization")
         return request
+    }
+    
+    private func convertToPhoto(from photoResult: PhotoResult) -> Photo? {
+        
+        let size = CGSize(width: photoResult.width, height: photoResult.height)
+        
+        guard let thumbImageURL = URL(string: photoResult.urls.thumb) else { return nil}
+        guard let largeImageURL = URL(string: photoResult.urls.full) else { return nil}
+        
+        let photo = Photo(
+            id: photoResult.id,
+            size: size,
+            createdAt: Date(), // MARK: edit Date
+            welcomeDescription: photoResult.description ?? photoResult.altDescription,
+            thumbImageURL: photoResult.urls.thumb,
+            largeImageURL: photoResult.urls.full,
+            isLiked: photoResult.likedByUser
+        )
+        
+        return photo
     }
 }
