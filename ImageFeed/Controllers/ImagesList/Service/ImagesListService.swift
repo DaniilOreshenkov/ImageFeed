@@ -7,12 +7,20 @@ final class ImagesListService {
     
     private let tokenStorage = OAuth2TokenStorage()
     private let networkService = NetworkService()
+    
     private(set) var photos: [Photo] = []
+    
+    private let dateFormatter = ISO8601DateFormatter()
+    private let resultDate = DateFormatter.defaultDateFormatter
+    
     private var lastLoadedPage: Int?
     private var task: URLSessionTask?
     
-    init() {}
+    private init() {}
     
+    func clearBeforeLogout() {
+        photos = []
+    }
     
     func fetchPhotosNextPage() {
         if task != nil {
@@ -32,11 +40,12 @@ final class ImagesListService {
             switch result {
             case .success(let photoResult):
                 lastLoadedPage = page
-                print("ImagesListService - Result: Fetched \(photoResult) photos for page \(page)")
-                photoResult.forEach {
+                var photos = [Photo]()
+                photoResult[..<(photoResult.count - 2)].forEach {
                     guard let photo = self.convertToPhoto(from: $0) else { return }
-                    self.photos.append(photo)
+                    photos.append(photo)
                 }
+                self.photos += photos
                 NotificationCenter.default.post(name: ImagesListService.didChangeNotification, object: self)
             case .failure(let error):
                 print("ImagesListService error: fetchPhotosNextPage - SomeError - \(error)")
@@ -47,11 +56,58 @@ final class ImagesListService {
         task.resume()
     }
     
+    func changeLike(photoId: String, isLiked: Bool, _ completion: @escaping (Result<Photo, Error>) -> Void) {
+        let request: URLRequest
+        if isLiked {
+            request = makeLikeRequest(with: "https://api.unsplash.com/photos/\(photoId)/like", httpMethod: "DELETE")
+        } else {
+            request = makeLikeRequest(with: "https://api.unsplash.com/photos/\(photoId)/like", httpMethod: "POST")
+        }
+        
+        let task = networkService.data(for: request) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(_):
+                if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
+                    let oldPhoto = self.photos[index]
+                    let newPhoto = Photo(
+                        id: oldPhoto.id,
+                        size: oldPhoto.size,
+                        createdAt: oldPhoto.createdAt,
+                        welcomeDescription: oldPhoto.welcomeDescription,
+                        thumbImageURL: oldPhoto.thumbImageURL,
+                        largeImageURL: oldPhoto.largeImageURL,
+                        isLiked: !oldPhoto.isLiked
+                    )
+                    self.photos[index] = newPhoto
+                    completion(.success((newPhoto)))
+                } else {
+                    completion(.failure(NetworkError.urlSessionError))
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+        task.resume()
+    }
+    
+    private func makeLikeRequest(with url: String, httpMethod: String) -> URLRequest {
+        guard let url = URL(string: url) else {
+            fatalError("Cannot construct url")
+        }
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(tokenStorage.token ?? "")", forHTTPHeaderField: "Authorization")
+        request.httpMethod = httpMethod
+        
+        return request
+    }
+    
     private func makeRequestPhoto(page: Int) -> URLRequest? {
         let baseURL = URL(string: Constants.defaultBaseURL)
         
         guard
-            let url = URL(string: "/photos", relativeTo: baseURL)
+            let url = URL(string: "/photos?page=\(page)", relativeTo: baseURL)
         else {
             assertionFailure("Cannot construct url")
             return nil
@@ -68,19 +124,30 @@ final class ImagesListService {
         
         let size = CGSize(width: photoResult.width, height: photoResult.height)
         
+        guard let date = convertDate(from: photoResult.createdAt) else { return nil }
         guard let thumbImageURL = URL(string: photoResult.urls.thumb) else { return nil}
         guard let largeImageURL = URL(string: photoResult.urls.full) else { return nil}
         
         let photo = Photo(
             id: photoResult.id,
             size: size,
-            createdAt: Date(), // MARK: edit Date
+            createdAt: date,
             welcomeDescription: photoResult.description ?? photoResult.altDescription,
-            thumbImageURL: photoResult.urls.thumb,
-            largeImageURL: photoResult.urls.full,
+            thumbImageURL: thumbImageURL,
+            largeImageURL: largeImageURL,
             isLiked: photoResult.likedByUser
         )
         
         return photo
+    }
+    
+    private func convertDate(from date: String?) -> String? {
+        guard let stringDate = date,
+              let date = dateFormatter.date(from: stringDate) else {
+            return nil
+        }
+        let result = resultDate.string(from: date)
+        
+        return result
     }
 }

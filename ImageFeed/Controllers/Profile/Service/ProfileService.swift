@@ -11,6 +11,10 @@ final class ProfileService {
     private var lastToken: String?
     private var task: URLSessionTask?
     
+    func clearBeforeLogout() {
+        profile = nil
+    }
+    
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
         assert(Thread.isMainThread)
         

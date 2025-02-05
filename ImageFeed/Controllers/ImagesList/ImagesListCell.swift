@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 final class ImagesListCell: UITableViewCell {
     static let reuseIdentifier = "ImagesListCell"
@@ -7,6 +8,11 @@ final class ImagesListCell: UITableViewCell {
     @IBOutlet private weak var imageCell: UIImageView!
     @IBOutlet private weak var dateLabel: UILabel!
     @IBOutlet private weak var likeButton: UIButton!
+    
+    weak var delegate: ImagesListCellDelegate?
+    
+    private var isLiked = false
+    private var photoId: String?
     
     private let currentDate = Date()
     private let dateFormatter: DateFormatter = {
@@ -19,18 +25,37 @@ final class ImagesListCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         gradientView.subviews.forEach { $0.removeFromSuperview() }
+        imageCell.kf.cancelDownloadTask()
     }
     
-    func configCell(with indexPath: IndexPath, photosName: [String])  {
-        guard let image = UIImage(named: photosName[indexPath.row]) else {
+    @IBAction func buttonLikeTapped(_ sender: UIButton) {
+        delegate?.imageListCellDidTapLike(self)
+    }
+    
+    func setIsLiked(_ isLiked: Bool) {
+        let newImage = isLiked ? UIImage(named: "LikeActive") : UIImage(named: "LikeNoActive")
+        self.likeButton.setImage(newImage, for: .normal)
+    }
+    
+    func configCell(in tableView: UITableView, with indexPath: IndexPath, photo: Photo)  {        
+        isLiked = photo.isLiked
+        photoId = photo.id
+        
+        guard
+            let likeImage = photo.isLiked
+                ? UIImage(named: "LikeActive") : UIImage(named: "LikeNoActive")
+        else {
             return
         }
-        doGradient(for: gradientView)
-        imageCell.image = image
-        dateLabel.text = dateFormatter.string(from: currentDate)
-        let isLiked = indexPath.row % 2 == 0
-        let likeImage = isLiked ? UIImage(named: "LikeActive") : UIImage(named: "LikeNoActive")
+        
+        imageCell.kf.indicatorType = .activity
+        imageCell.kf.setImage(with: photo.thumbImageURL, placeholder: UIImage(resource: .placeholder)) { _ in
+            tableView.reloadRows(at: [indexPath], with: .automatic)
+        }
+        dateLabel.text = photo.createdAt
         likeButton.setImage(likeImage, for: .normal)
+        
+        doGradient(for: gradientView)
     }
     
     private func doGradient(for view: UIView) {
