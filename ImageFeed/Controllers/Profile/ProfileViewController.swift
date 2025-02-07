@@ -43,6 +43,7 @@ final class ProfileViewController: UIViewController {
     }()
     
     private let profileService = ProfileService.shared
+    private let profileLogoutService = ProfileLogoutService.shared
     private var profileImageServiceObserver: NSObjectProtocol?
     
     // MARK: Life Cycle
@@ -51,7 +52,7 @@ final class ProfileViewController: UIViewController {
         super.viewDidLoad()
         
         configure(model: profileService.profile)
-        
+    
         setupViews()
         setupLayouts()
         setupAppearance()
@@ -133,5 +134,20 @@ final class ProfileViewController: UIViewController {
     
     private func setupAppearance() {
         view.backgroundColor = UIColor(resource: .ypBlack)
+        logoutButton.addTarget(self, action: #selector(buttonLogoutTapped), for: .touchUpInside)
+    }
+    
+    @objc private func buttonLogoutTapped() {
+        let alertPresenter = AlertPresenter()
+        alertPresenter.delegate = self
+        
+        let alertModel = AlertModel(
+            title: "Пока, пока!",
+            message: "Уверены, что хотите выйти?",
+            buttonText: "Да") { [weak self] _ in
+                guard let self else { return }
+                self.profileLogoutService.logout()
+            }
+        alertPresenter.showAlert(model: alertModel, button: true)
     }
 }

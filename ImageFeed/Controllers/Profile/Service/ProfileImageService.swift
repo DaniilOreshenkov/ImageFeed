@@ -13,17 +13,8 @@ final class ProfileImageService {
     
     private init() {}
     
-    private func makeRequest(username: String) -> URLRequest? {
-        guard let url = URL(string: "https://api.unsplash.com/users/\(username)") else {
-            print("cannot construct url for fetching image")
-            return nil
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        
-        request.setValue("Bearer \(tokenStorage.token ?? "")", forHTTPHeaderField: "Authorization")
-        return request
+    func clearBeforeLogout() {
+        avatarURL = nil
     }
     
     func fetchProfileImageURL(username: String, completion: @escaping (Result<String, Error>) -> Void) {
@@ -45,7 +36,7 @@ final class ProfileImageService {
         
         let task = networkService.objectTask(for: request) { [weak self] (result:(Result<UserResult, Error>)) in
             assert(Thread.isMainThread)
-    
+            
             guard let self = self else { return }
             
             switch result{
@@ -71,5 +62,18 @@ final class ProfileImageService {
         
         self.task = task
         task.resume()
+    }
+    
+    private func makeRequest(username: String) -> URLRequest? {
+        guard let url = URL(string: "https://api.unsplash.com/users/\(username)") else {
+            print("cannot construct url for fetching image")
+            return nil
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        request.setValue("Bearer \(tokenStorage.token ?? "")", forHTTPHeaderField: "Authorization")
+        return request
     }
 }

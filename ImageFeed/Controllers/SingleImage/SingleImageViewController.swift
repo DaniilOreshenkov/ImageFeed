@@ -5,22 +5,19 @@ final class SingleImageViewController: UIViewController {
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var scrollView: UIScrollView!
     
-    var image: UIImage? {
-        didSet {
-            guard isViewLoaded else { return }
-            imageView.image = image
-        }
-    }
+    var imageURL: URL?
+    
+    var image = UIImage()
     
     override func viewDidLoad() {
-        imageView.image = image
+        
+        setFullImage()
         scrollView.delegate = self
         setupImageView()
-        configureScrollView(imageSize: image?.size)
     }
     
-    override func viewWillLayoutSubviews() { 
-        configureScrollView(imageSize: image?.size)
+    override func viewWillLayoutSubviews() {
+        configureScrollView(imageSize: image.size)
     }
     
     
@@ -29,13 +26,12 @@ final class SingleImageViewController: UIViewController {
     }
     
     @IBAction func didTapShareButton(_ sender: UIButton) {
-        guard let image = image else { return }
         let activityView = UIActivityViewController(activityItems: [image], applicationActivities: nil)
         activityView.overrideUserInterfaceStyle = .dark
         present(activityView, animated: true)
     }
     
-    func setupImageView() {
+    private func setupImageView() {
         guard let image = imageView.image else { return }
         
         var widthScale: CGFloat = .zero
@@ -57,14 +53,42 @@ final class SingleImageViewController: UIViewController {
         imageView.frame = CGRect(x: 0, y: 0, width: scaledWidth, height: scaledHeight)
     }
     
+    private func setFullImage() {
+        UIBlockingProgressHUD.show()
+        imageView.kf.setImage(with: imageURL) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let value):
+                self.image = value.image
+                self.imageView.frame.size = image.size
+                self.configureScrollView(imageSize: image.size)
+            case .failure(let error):
+                print("Error \(error)")
+                let alertPresenter = AlertPresenter()
+                alertPresenter.delegate = self
+                
+                let alertModel = AlertModel(
+                    title: "Что-то пошло не так(",
+                    message: "Попробовать еще раз?",
+                    buttonText: "Ок") { [weak self] _ in
+                        self?.setFullImage()
+                    }
+                alertPresenter.showAlert(model: alertModel)
+            }
+            UIBlockingProgressHUD.dismiss()
+        }
+    }
+    
     private func configureScrollView(imageSize: CGSize?) {
+        
+        
+        setupZoomScales()
+        centerImage()
+        
         guard let imageSize = imageSize else { return }
         scrollView.contentSize = imageSize
         scrollView.showsVerticalScrollIndicator = false
         scrollView.showsHorizontalScrollIndicator = false
-        
-        setupZoomScales()
-        centerImage()
     }
     
     private func setupZoomScales() {
