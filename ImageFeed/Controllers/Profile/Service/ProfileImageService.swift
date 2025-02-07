@@ -14,8 +14,8 @@ final class ProfileImageService {
     private init() {}
     
     func clearBeforeLogout() {
-            avatarURL = nil
-        }
+        avatarURL = nil
+    }
     
     func fetchProfileImageURL(username: String, completion: @escaping (Result<String, Error>) -> Void) {
         
@@ -36,7 +36,7 @@ final class ProfileImageService {
         
         let task = networkService.objectTask(for: request) { [weak self] (result:(Result<UserResult, Error>)) in
             assert(Thread.isMainThread)
-    
+            
             guard let self = self else { return }
             
             switch result{

@@ -1,4 +1,4 @@
-import UIKit
+import Foundation
 
 struct PhotoUrls: Decodable {
     let raw, full, regular, small: String

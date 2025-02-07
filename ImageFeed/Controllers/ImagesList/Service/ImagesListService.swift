@@ -58,17 +58,13 @@ final class ImagesListService {
     
     func changeLike(photoId: String, isLiked: Bool, _ completion: @escaping (Result<Photo, Error>) -> Void) {
         let request: URLRequest
-        if isLiked {
-            request = makeLikeRequest(with: "https://api.unsplash.com/photos/\(photoId)/like", httpMethod: "DELETE")
-        } else {
-            request = makeLikeRequest(with: "https://api.unsplash.com/photos/\(photoId)/like", httpMethod: "POST")
-        }
+        request = makeLikeRequest(with: "https://api.unsplash.com/photos/\(photoId)/like", httpMethod: isLiked ? "DELETE" : "POST")
         
         let task = networkService.data(for: request) { [weak self] result in
             guard let self = self else { return }
             
             switch result {
-            case .success(_):
+            case .success:
                 if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
                     let oldPhoto = self.photos[index]
                     let newPhoto = Photo(
@@ -92,9 +88,10 @@ final class ImagesListService {
         task.resume()
     }
     
-    private func makeLikeRequest(with url: String, httpMethod: String) -> URLRequest {
+    private func makeLikeRequest(with url: String, httpMethod: String) -> URLRequest? {
         guard let url = URL(string: url) else {
-            fatalError("Cannot construct url")
+            assertionFailure("Cannot construct url")
+            return nil
         }
         var request = URLRequest(url: url)
         request.setValue("Bearer \(tokenStorage.token ?? "")", forHTTPHeaderField: "Authorization")
@@ -124,9 +121,12 @@ final class ImagesListService {
         
         let size = CGSize(width: photoResult.width, height: photoResult.height)
         
-        guard let date = convertDate(from: photoResult.createdAt) else { return nil }
-        guard let thumbImageURL = URL(string: photoResult.urls.thumb) else { return nil}
-        guard let largeImageURL = URL(string: photoResult.urls.full) else { return nil}
+        guard let date = convertDate(from: photoResult.createdAt),
+              let thumbImageURL = URL(string: photoResult.urls.thumb),
+              let largeImageURL = URL(string: photoResult.urls.full)
+        else {
+            return nil
+        }
         
         let photo = Photo(
             id: photoResult.id,
