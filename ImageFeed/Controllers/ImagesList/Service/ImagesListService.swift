@@ -57,8 +57,12 @@ final class ImagesListService {
     }
     
     func changeLike(photoId: String, isLiked: Bool, _ completion: @escaping (Result<Photo, Error>) -> Void) {
-        let request: URLRequest
-        request = makeLikeRequest(with: "https://api.unsplash.com/photos/\(photoId)/like", httpMethod: isLiked ? "DELETE" : "POST")
+        guard
+            let request = makeLikeRequest(with: "https://api.unsplash.com/photos/\(photoId)/like", httpMethod: isLiked ? "DELETE" : "POST")
+        else {
+            return
+        }
+        
         
         let task = networkService.data(for: request) { [weak self] result in
             guard let self = self else { return }
