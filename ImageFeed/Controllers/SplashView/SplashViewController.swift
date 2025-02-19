@@ -73,7 +73,7 @@ extension SplashViewController {
     private func fetchProfile(token: String) {
         let profileService = ProfileService.shared
         UIBlockingProgressHUD.show()
-        profileService.fetchProfile(token) { [weak self] result in
+        profileService.fetchProfile(bearerToken: token) { [weak self] result in
             guard let self = self else { return }
             UIBlockingProgressHUD.dismiss()
             switch result {

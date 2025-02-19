@@ -1,7 +1,8 @@
 import UIKit
 
-final class ProfileService {
-    static let shared = ProfileService()
+final class ProfileService:  ProfileServiceProtocol {
+    
+    static let shared: ProfileServiceProtocol = ProfileService()
     private init() {}
     
     private let networkService: NetworkServiceProtocol = NetworkService()
@@ -15,7 +16,7 @@ final class ProfileService {
         profile = nil
     }
     
-    func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
+    func fetchProfile(bearerToken token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
         assert(Thread.isMainThread)
         
         if lastToken == token {

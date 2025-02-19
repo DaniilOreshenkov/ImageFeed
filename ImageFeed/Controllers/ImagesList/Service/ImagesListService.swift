@@ -1,9 +1,9 @@
 import UIKit
 
-final class ImagesListService {
+final class ImagesListService: ImagesListServiceProtocol {
     
     static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
-    static let shared = ImagesListService()
+    static let shared: ImagesListServiceProtocol = ImagesListService()
     
     private let tokenStorage = OAuth2TokenStorage()
     private let networkService = NetworkService()

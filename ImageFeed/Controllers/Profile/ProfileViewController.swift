@@ -1,7 +1,10 @@
 import UIKit
 import Kingfisher
 
-final class ProfileViewController: UIViewController {
+final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
+    
+    var presenter: ProfilePresenterProtocol?
+    
     // MARK: Properties
     
     private let avatarImageView: UIImageView = {
@@ -38,12 +41,11 @@ final class ProfileViewController: UIViewController {
     
     private let logoutButton: UIButton = {
         let button = UIButton()
+        button.accessibilityIdentifier = "logoutButton"
         button.setImage(.exit, for: .normal)
         return button
     }()
     
-    private let profileService = ProfileService.shared
-    private let profileLogoutService = ProfileLogoutService.shared
     private var profileImageServiceObserver: NSObjectProtocol?
     
     // MARK: Life Cycle
@@ -51,22 +53,11 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        configure(model: profileService.profile)
-    
         setupViews()
         setupLayouts()
         setupAppearance()
         
-        profileImageServiceObserver = NotificationCenter.default
-            .addObserver(
-                forName: ProfileImageService.didChangeNotification,
-                object: nil,
-                queue: .main
-            ) { [weak self] _ in
-                guard let self = self else { return }
-                self.updateAvatar()
-            }
-        updateAvatar()
+        presenter?.viewDidLoad()
     }
     
     func configure(model: Profile?) {
@@ -76,14 +67,8 @@ final class ProfileViewController: UIViewController {
         descriptionLabel.text = model.bio
     }
     
-    private func updateAvatar() {
-        
+    func setAvatar(url: URL) {
         let processor = RoundCornerImageProcessor(cornerRadius: 50)
-        guard
-            let profileImageURL = ProfileImageService.shared.avatarURL,
-            let url = URL(string: profileImageURL)
-        else { return }
-        
         avatarImageView.kf.setImage(
             with: url,
             placeholder: UIImage(resource: .stub),
@@ -91,6 +76,10 @@ final class ProfileViewController: UIViewController {
                 .processor(processor)
             ]
         )
+    }
+    
+    func updateAvatar() {
+        presenter?.updateAvatar()
     }
     
     private func setupViews() {
@@ -146,7 +135,7 @@ final class ProfileViewController: UIViewController {
             message: "Уверены, что хотите выйти?",
             buttonText: "Да") { [weak self] _ in
                 guard let self else { return }
-                self.profileLogoutService.logout()
+                self.presenter?.doLogoutAction()
             }
         alertPresenter.showAlert(model: alertModel, button: true)
     }

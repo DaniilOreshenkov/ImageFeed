@@ -1,4 +1,4 @@
-import UIKit
+import Foundation
 
 protocol WebViewControllerDelegate: AnyObject {
     func webViewViewController(_ vc: WebViewController, didAuthenticateWithCode code: String)
