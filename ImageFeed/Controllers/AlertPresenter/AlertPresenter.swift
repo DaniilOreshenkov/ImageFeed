@@ -8,7 +8,9 @@ final class AlertPresenter {
         let alert = UIAlertController(title: model.title,
                                       message: model.message,
                                       preferredStyle: .alert)
+        alert.view.accessibilityIdentifier = "Alert"
         let button = UIAlertAction(title: model.buttonText, style: .default, handler: model.completion)
+        button.accessibilityIdentifier = "Yes"
         let buttonCancel = UIAlertAction(title: "Нет", style: .default) { _ in }
         alert.addAction(button)
         

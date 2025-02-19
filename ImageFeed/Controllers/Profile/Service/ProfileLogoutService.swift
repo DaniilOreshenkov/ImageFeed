@@ -2,8 +2,9 @@ import Foundation
 import WebKit
 import SwiftKeychainWrapper
 
-final class ProfileLogoutService {
-    static let shared = ProfileLogoutService()
+final class ProfileLogoutService: ProfileLogoutServiceProtocol {
+    
+    static let shared: ProfileLogoutServiceProtocol = ProfileLogoutService()
     
     private let profileImageService = ProfileImageService.shared
     private let profileService = ProfileService.shared
