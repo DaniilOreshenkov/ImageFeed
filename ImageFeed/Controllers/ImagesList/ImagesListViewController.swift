@@ -25,12 +25,6 @@ final class ImagesListViewController: UIViewController, ImagesListViewController
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //        NotificationCenter.default.addObserver(
-        //            forName: ImagesListService.didChangeNotification,
-        //            object: nil,
-        //            queue: .main) { [weak self] _ in
-        //                guard let self = self else { return }
-        //                self.updateTableViewAnimated()
         imageListCell = ImagesListCell()
         setupTableView()
         presenter?.viewDidLoad()
@@ -66,9 +60,7 @@ final class ImagesListViewController: UIViewController, ImagesListViewController
     }
     
     func updateTableViewAnimated() {
-        guard
-            let (oldCount, newCount) = presenter?.updatePhotosAndGetCounts()
-        else { return }
+        guard let (oldCount, newCount) = presenter?.updatePhotosAndGetCounts() else { return }
         
         tableView.performBatchUpdates {
             let indexPaths = (oldCount..<newCount).map { i in
@@ -142,23 +134,6 @@ extension ImagesListViewController: UITableViewDelegate {
 }
 
 extension ImagesListViewController: ImagesListCellDelegate {
-    //    func imageListCellDidTapLike(_ cell: ImagesListCell) {
-    //        guard let indexPath = tableView.indexPath(for: cell) else { return }
-    //        let photo = photos[indexPath.row]
-    //
-    //        UIBlockingProgressHUD.show()
-    //        imagesListService.changeLike(photoId: photo.id, isLiked: photo.isLiked) { [weak self] result in
-    //            guard let self = self else { return }
-    //            switch result {
-    //            case .success(let newPhoto):
-    //                self.photos[indexPath.row] = newPhoto
-    //                cell.setIsLiked(newPhoto.isLiked)
-    //            case .failure(let error):
-    //                print(error)
-    //            }
-    //            UIBlockingProgressHUD.dismiss()
-    //        }
-    //    }
     func imageListCellDidTapLike(_ cell: ImagesListCell) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         

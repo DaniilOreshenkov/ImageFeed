@@ -43,6 +43,13 @@
 			);
 			target = 197966122CF1078700DC31CC /* ImageFeed */;
 		};
+		1985247B2D67B71900C53E60 /* Exceptions for "ImageFeed" folder in "ImageFeedTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Controllers/ImagesList/Model/Photo.swift,
+			);
+			target = 19726E9D2D65042E005099BC /* ImageFeedTests */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -60,6 +67,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				197966252CF1078900DC31CC /* Exceptions for "ImageFeed" folder in "ImageFeed" target */,
+				1985247B2D67B71900C53E60 /* Exceptions for "ImageFeed" folder in "ImageFeedTests" target */,
 			);
 			path = ImageFeed;
 			sourceTree = "<group>";
