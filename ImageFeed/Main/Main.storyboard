@@ -6,7 +6,6 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -55,6 +54,7 @@
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AtL-ga-bJT">
                                                     <rect key="frame" x="333" y="0.0" width="44" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="LikeButton"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" secondItem="AtL-ga-bJT" secondAttribute="height" multiplier="1:1" id="enh-rF-hiM"/>
                                                         <constraint firstAttribute="height" constant="44" id="ld2-LF-ZMr"/>
@@ -138,6 +138,7 @@
                             </scrollView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mN4-o7-kg2">
                                 <rect key="frame" x="8" y="8" width="44" height="44"/>
+                                <accessibility key="accessibilityConfiguration" identifier="BackToImagesListButton"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="44" id="Y6e-iz-ftR"/>
                                     <constraint firstAttribute="height" constant="44" id="xLL-vH-OXk"/>
@@ -202,6 +203,7 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JGd-aZ-KM5">
                                 <rect key="frame" x="16" y="646" width="361" height="48"/>
                                 <color key="backgroundColor" name="YPWhite "/>
+                                <accessibility key="accessibilityConfiguration" identifier="Authenticate"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="vX4-9k-wJS"/>
                                 </constraints>
@@ -239,7 +241,7 @@
         <!--Web View Controller-->
         <scene sceneID="QYK-1E-MiL">
             <objects>
-                <viewController id="izz-qD-EOc" customClass="WebViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="WebViewController" id="izz-qD-EOc" customClass="WebViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="7ks-Uy-C7G">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -258,7 +260,7 @@
                             </progressView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="VV6-9k-vV2"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" name="YPWhite "/>
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="9c4-h7-TPb" secondAttribute="trailing" id="9yw-zI-ddZ"/>
                             <constraint firstItem="9c4-h7-TPb" firstAttribute="top" secondItem="VV6-9k-vV2" secondAttribute="top" id="KCt-G0-76u"/>
@@ -316,8 +318,5 @@
         <namedColor name="YPWhite ">
             <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
         </namedColor>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
     </resources>
 </document>
